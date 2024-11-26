@@ -1,0 +1,515 @@
+[
+    {
+        "id": "e3cd74781000fed2",
+        "type": "tab",
+        "label": "SQL dashboard",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fd882310fe31a57b",
+        "type": "http in",
+        "z": "e3cd74781000fed2",
+        "name": "show sql",
+        "url": "/show_sql",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 100,
+        "wires": [
+            [
+                "07ddd777f0547c50"
+            ]
+        ]
+    },
+    {
+        "id": "d76be24078610e9f",
+        "type": "http response",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "07ddd777f0547c50",
+        "type": "template",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "This is the payload: {{payload}} !",
+        "output": "str",
+        "x": 400,
+        "y": 100,
+        "wires": [
+            [
+                "d76be24078610e9f"
+            ]
+        ]
+    },
+    {
+        "id": "affe91898114ad3e",
+        "type": "ui_table",
+        "z": "e3cd74781000fed2",
+        "group": "561b1c68db963aa7",
+        "name": "",
+        "order": 0,
+        "width": "8",
+        "height": "6",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 1090,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "20c92f9c97f49cf6",
+        "type": "sqlite",
+        "z": "e3cd74781000fed2",
+        "mydb": "90c2452fcb514f1c",
+        "sqlquery": "fixed",
+        "sql": "SELECT * FROM The_amount_of_latex_per_tree;\n",
+        "name": "SELECT DATA",
+        "x": 920,
+        "y": 660,
+        "wires": [
+            [
+                "affe91898114ad3e",
+                "acf3fb3255721fb6"
+            ]
+        ]
+    },
+    {
+        "id": "af142723500aa340",
+        "type": "inject",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": " ",
+        "payload": "",
+        "payloadType": "date",
+        "x": 690,
+        "y": 520,
+        "wires": [
+            [
+                "20c92f9c97f49cf6"
+            ]
+        ]
+    },
+    {
+        "id": "acf3fb3255721fb6",
+        "type": "function",
+        "z": "e3cd74781000fed2",
+        "name": "function 3",
+        "func": "const read_data = msg.payload; // อ่านข้อมูลจาก payload\nlet chartDate = [];  // อาร์เรย์เก็บวันที่\nlet chartLatex = []; // อาร์เรย์เก็บปริมาณน้ำยาง\n\nvar m = {};  // วัตถุสำหรับเก็บข้อมูลที่จะส่งไปยัง Chart Node\n\n// วนลูปผ่านข้อมูลที่อ่านมา\nfor (let i = 0; i < read_data.length; i++) {\n  let row = read_data[i];\n\n  // เพิ่มวันที่ (Time) ลงใน chartDate\n  chartDate.push(row.Time);\n\n  // เพิ่มปริมาณน้ำยาง (Latex_volume) ลงใน chartLatex\n  chartLatex.push(row.Latex_volume);\n}\n\n// กำหนด labels เป็นวันที่ (ใช้ chartDate)\nm.labels = chartDate;  // ตั้ง labels เป็นวันที่ที่ได้จากฐานข้อมูล\n\n// สร้าง data ในรูปแบบที่ Chart Node คาดหวัง\nm.data = [chartLatex];  // ใช้ chartLatex สำหรับข้อมูลที่จะแสดงในกราฟ\n\n// กำหนด series ให้กับกราฟ\nm.series = ['Latex Volume'];  // ชื่อของ series\n\n// ส่งข้อมูลออกไปในรูปแบบที่ Chart Node คาดหวัง\nreturn { payload: [m], topic: msg.topic };\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 780,
+        "wires": [
+            [
+                "bbfaea1ac6d199d7",
+                "d22c7a61f75db0d6",
+                "2eb97f6ecc83a1d3"
+            ]
+        ]
+    },
+    {
+        "id": "bbfaea1ac6d199d7",
+        "type": "ui_chart",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "group": "217b38abc8fd68bd",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Line chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "No Data",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1340,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d22c7a61f75db0d6",
+        "type": "ui_chart",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "group": "8531d5e2535a4732",
+        "order": 0,
+        "width": "8",
+        "height": "6",
+        "label": "Bar chart",
+        "chartType": "bar",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1340,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2eb97f6ecc83a1d3",
+        "type": "ui_chart",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "group": "9a0e825b681876dc",
+        "order": 0,
+        "width": "8",
+        "height": "6",
+        "label": "Pie chart",
+        "chartType": "pie",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1340,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d7278c3738314ed",
+        "type": "sqlite",
+        "z": "e3cd74781000fed2",
+        "mydb": "90c2452fcb514f1c",
+        "sqlquery": "msg.topic",
+        "sql": "SELECT * FROM The_amount_of_latex_per_tree\nWHERE TIME LIKE '${msg.payload%}';",
+        "name": "Like Data",
+        "x": 600,
+        "y": 620,
+        "wires": [
+            [
+                "20c92f9c97f49cf6"
+            ]
+        ]
+    },
+    {
+        "id": "a5bc9902380f3218",
+        "type": "ui_form",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "label": "find item",
+        "group": "bf99077f2ce97088",
+        "order": 1,
+        "width": "8",
+        "height": "28",
+        "options": [
+            {
+                "label": "Time",
+                "value": "date",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "date": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "payload",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 120,
+        "y": 620,
+        "wires": [
+            [
+                "3cb32bd7c83314c9"
+            ]
+        ]
+    },
+    {
+        "id": "3cb32bd7c83314c9",
+        "type": "function",
+        "z": "e3cd74781000fed2",
+        "name": "Sqlite_like_data",
+        "func": "// กำหนด payload input\nconst data = msg.payload;\n\nmsg.topic = `SELECT * FROM The_amount_of_latex_per_tree WHERE TIME LIKE '${data.date}%';`;\n// ส่งคำสั่ง SQL กลับไป\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 620,
+        "wires": [
+            [
+                "9d7278c3738314ed"
+            ]
+        ]
+    },
+    {
+        "id": "dcc75b74c3d01e0a",
+        "type": "ui_form",
+        "z": "e3cd74781000fed2",
+        "name": "",
+        "label": "insertdata",
+        "group": "6bd6da5270593613",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "options": [
+            {
+                "label": "Time",
+                "value": "time",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Tree",
+                "value": "count",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Latex",
+                "value": "latex",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "time": "",
+            "count": "",
+            "latex": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "payload",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 120,
+        "y": 740,
+        "wires": [
+            [
+                "dc90b933d2f3e82a"
+            ]
+        ]
+    },
+    {
+        "id": "dc90b933d2f3e82a",
+        "type": "function",
+        "z": "e3cd74781000fed2",
+        "name": "sqlite_insert_data",
+        "func": "const data = msg.payload;\n\n// สร้างคำสั่ง INSERT ด้วยข้อมูลจาก msg.payload\nmsg.topic = `INSERT INTO The_amount_of_latex_per_tree (Time, Tree, Latex_volume) VALUES ('${data.time}', ${data.count}, '${data.latex}');`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 740,
+        "wires": [
+            [
+                "9962f63b726ab4e1"
+            ]
+        ]
+    },
+    {
+        "id": "9962f63b726ab4e1",
+        "type": "sqlite",
+        "z": "e3cd74781000fed2",
+        "mydb": "90c2452fcb514f1c",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "Insert Data",
+        "x": 610,
+        "y": 740,
+        "wires": [
+            [
+                "20c92f9c97f49cf6"
+            ]
+        ]
+    },
+    {
+        "id": "561b1c68db963aa7",
+        "type": "ui_group",
+        "name": "Data",
+        "tab": "048d3d2fa8db0f91",
+        "order": 2,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "90c2452fcb514f1c",
+        "type": "sqlitedb",
+        "db": "C:\\Users\\build\\Desktop\\database.db",
+        "mode": "RWC"
+    },
+    {
+        "id": "217b38abc8fd68bd",
+        "type": "ui_group",
+        "name": " Line Chart",
+        "tab": "048d3d2fa8db0f91",
+        "order": 1,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8531d5e2535a4732",
+        "type": "ui_group",
+        "name": "Bar Chart",
+        "tab": "048d3d2fa8db0f91",
+        "order": 3,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9a0e825b681876dc",
+        "type": "ui_group",
+        "name": "Pie",
+        "tab": "048d3d2fa8db0f91",
+        "order": 4,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bf99077f2ce97088",
+        "type": "ui_group",
+        "name": "Find Data",
+        "tab": "048d3d2fa8db0f91",
+        "order": 5,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6bd6da5270593613",
+        "type": "ui_group",
+        "name": "Insert",
+        "tab": "048d3d2fa8db0f91",
+        "order": 6,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "048d3d2fa8db0f91",
+        "type": "ui_tab",
+        "name": "SQL",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
