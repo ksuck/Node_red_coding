@@ -1,0 +1,126 @@
+[
+    {
+        "id": "419e094c8a2407e0",
+        "type": "tab",
+        "label": "main flow",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f4c615339b65000b",
+        "type": "inject",
+        "z": "419e094c8a2407e0",
+        "name": "add",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 390,
+        "y": 520,
+        "wires": [
+            [
+                "e44ed98443e73069"
+            ]
+        ]
+    },
+    {
+        "id": "e44ed98443e73069",
+        "type": "function",
+        "z": "419e094c8a2407e0",
+        "name": "function 1",
+        "func": "counter = flow.get('counter')\n\nif (counter === undefined){\n    counter = 0\n}\n\nmsg.payload = counter + 1\n\nflow.set('counter',msg.payload)\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "counter",
+                "module": "count"
+            }
+        ],
+        "x": 580,
+        "y": 520,
+        "wires": [
+            [
+                "270a7901690ed4da"
+            ]
+        ]
+    },
+    {
+        "id": "270a7901690ed4da",
+        "type": "debug",
+        "z": "419e094c8a2407e0",
+        "d": true,
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "87edda6087534292",
+        "type": "inject",
+        "z": "419e094c8a2407e0",
+        "name": "reset",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 390,
+        "y": 480,
+        "wires": [
+            [
+                "332143bb378df6fd"
+            ]
+        ]
+    },
+    {
+        "id": "332143bb378df6fd",
+        "type": "function",
+        "z": "419e094c8a2407e0",
+        "name": "function 2",
+        "func": "counter = flow.get('counter')\n\nflow.set('counter',0)\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "counter",
+                "module": "count"
+            }
+        ],
+        "x": 540,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    }
+]
